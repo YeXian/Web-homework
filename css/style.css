@@ -1,0 +1,110 @@
+    body {
+        background-color: #f8f8f8;
+        min-width: 1205px;
+    }
+    /*清除浮动元素*/
+    .clear-fix:after {
+        content: "."; 
+        display: block;
+        clear: both;
+        height: 0;
+        overflow: hidden;
+        visibility: hidden;
+    }
+    /*顶部提醒栏*/
+    #top-advertisement {
+        height: 36px;
+        background-color: #f3f3f3;
+    }
+    #top-advertisement .text-box {
+        width: 1205px;
+        margin: 0 auto;
+        font: 12px/36px "Microsoft YaHei";
+    }
+    #top-advertisement .j-ad {
+        float: left;
+    }
+    #top-advertisement .j-ad > a {
+        color: #21a557;
+    }
+    #top-advertisement .j-close {
+        float: right;
+    }
+    #top-advertisement .j-close:hover {
+        color: #21a557;
+    }
+    /*导航栏*/
+    #nav {
+        height: 95px;
+        background-color: #fff;
+    }
+    #nav .nav-box {
+        width: 1205px;
+        margin: 0 auto;
+
+    }
+    #nav .logo1 {
+        float: left;
+        margin-top: 36px;
+    }
+    /*关注按钮 需修改*/
+    #nav .focus {
+        display: block;
+        float: left;
+        margin-left: 31px;
+        margin-top: 36px;
+        padding: 0 9px;
+        font: 12px/21px '宋体';
+        color: #fff;
+        background-color: #21a557;
+        border-radius: 2px;
+    }
+    #nav .focus > em {
+        font-weight: 700;
+        font-size: 14px;
+        margin-right: 5px;
+    }
+    #nav .focus:hover {
+        background-color: #2fb556;
+    }
+    #nav .fans {
+        float: left;
+        margin-left: 14px;
+        margin-top: 36px;
+        font: 12px/21px '宋体';
+    }
+    #nav .fl-right {
+        float: right;
+    }
+    #nav .fl-right > a {
+        float: left;
+        margin-right: 54px;
+        font: 16px/90px 'Microsoft YaHei';
+        color: #000;        
+    }
+    #nav .mooc {
+        margin-right: 30px;
+    }
+    #nav .fl-right > a:hover {
+        color: #39a030;
+    }
+    .nav-search {
+        float: left;
+        width: 20px;
+        height: 19px;
+        margin-top: 37px;
+        background: url(../img/icon.png) 0 -85px no-repeat;
+        margin-right: 15px;
+    }
+    /*banner*/
+    .index-banner > img {
+        width: 100%;
+    }
+    /*页脚*/
+
+    /*媒体检测*/
+    @media screen and (max-width: 1205px) {
+        #top-advertisement .text-box {
+            width: 960px;
+        }
+    }
