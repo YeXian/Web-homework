@@ -12,25 +12,36 @@
         visibility: hidden;
     }
     /*顶部提醒栏*/
-    #top-advertisement {
+    #top-ad {
         height: 36px;
         background-color: #f3f3f3;
     }
-    #top-advertisement .text-box {
+    #top-ad .box {
         width: 1205px;
         margin: 0 auto;
         font: 12px/36px "Microsoft YaHei";
     }
-    #top-advertisement .j-ad {
+    #top-ad .more {
         float: left;
     }
-    #top-advertisement .j-ad > a {
+    #top-ad .more a {
         color: #21a557;
     }
-    #top-advertisement .j-close {
+    #top-ad .more a {
+        color: #21a557;
+    }
+    #top-ad .more a:hover {
+        text-decoration: underline;
+    }
+    #top-ad .close {
         float: right;
     }
-    #top-advertisement .j-close:hover {
+    #top-ad .close span {
+        font-size: 18px;
+        line-height: 1;
+        vertical-align: text-bottom;
+    }
+    #top-ad .close:hover {
         color: #21a557;
     }
     /*导航栏*/
@@ -38,73 +49,210 @@
         height: 95px;
         background-color: #fff;
     }
-    #nav .nav-box {
+    .nav-box {
         width: 1205px;
         margin: 0 auto;
-
     }
-    #nav .logo1 {
+    .nav-logo {
         float: left;
         margin-top: 36px;
+        margin-left: 1px;
     }
     /*关注按钮 需修改*/
-    #nav .focus {
+    .nav-focus {
         display: block;
         float: left;
         margin-left: 31px;
         margin-top: 36px;
         padding: 0 9px;
-        font: 12px/21px '宋体';
+        font: 12px/21px "宋体";
         color: #fff;
         background-color: #21a557;
         border-radius: 2px;
     }
-    #nav .focus > em {
+    .nav-focus > em {
         font-weight: 700;
         font-size: 14px;
         margin-right: 5px;
     }
-    #nav .focus:hover {
+    .nav-focus:hover {
         background-color: #2fb556;
+        color: #fff;
     }
-    #nav .fans {
+    .nav-fans {
         float: left;
         margin-left: 14px;
         margin-top: 36px;
-        font: 12px/21px '宋体';
+        font: 12px/21px "宋体";
+        color: #666;
     }
-    #nav .fl-right {
+    /*导航栏右边菜单*/
+    .nav-menu {
         float: right;
     }
-    #nav .fl-right > a {
+    .nav-menu > a {
         float: left;
         margin-right: 54px;
-        font: 16px/90px 'Microsoft YaHei';
-        color: #000;        
+        font: 16px/90px "Microsoft YaHei";
+        color: #666;
     }
-    #nav .mooc {
+    .nav-mooc {
         margin-right: 30px;
     }
-    #nav .fl-right > a:hover {
+    .nav-menu > a:hover {
         color: #39a030;
     }
     .nav-search {
         float: left;
-        width: 20px;
+        width: 19px;
         height: 19px;
         margin-top: 37px;
         background: url(../img/icon.png) 0 -85px no-repeat;
         margin-right: 15px;
     }
+    .nav-search:hover {
+        background-position: -19px -85px;
+    }
     /*banner*/
     .index-banner > img {
         width: 100%;
     }
+    /*主页网站推广*/
+    .index-promotion {
+        background-color: #fff;
+        height: 295px;
+    }
+    .promotion-box {
+        width: 1205px;
+        margin: 0 auto;
+    }
+    .promotion-item {
+        position: relative;
+        float: left;
+        width: 243px;
+        padding: 0 10px 0 100px;
+        margin: 60px 0 0 5px;
+    }
+    .promotion-item + .promotion-item {
+        margin-left: 70px;
+    }
+    .promotion-item h2 {
+        font: 22px "Microsoft YaHei";
+        color: #333;
+    }
+    .promotion-item p {
+        margin-top: 10px;
+        font: 14px/24px "Microsoft YaHei";
+        color: #666;
+    }
+    .promotion-item p a {
+        color: #39a030;
+    }
+    .promotion-item p a:hover {
+        text-decoration: underline;
+    }
+    .promotion-item .logo {
+        position: absolute;
+        left: 0;
+        top: 5px;
+        width: 80px;
+        height: 80px;
+    }
+    .promotion-item .logo1 {
+        background: url(../img/icon.png) 0 0 no-repeat;
+    }
+    .promotion-item .logo2 {
+        background: url(../img/icon.png) -85px 0 no-repeat;
+    }
+    .promotion-item .logo3 {
+        background: url(../img/icon.png) -170px 0 no-repeat;
+    }
+    /*多列图*/
+    .m-column {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+    }
+    .m-column .container {
+        position: absolute;
+        width: 1620px;
+        left: 50%;
+        margin-left: -810px;
+    }
+    .m-column .box{
+        position: relative;
+        float: left;
+        width: 320px;
+        height: 220px;
+        padding: 2px;
+        overflow: hidden;
+    }
+    .m-column .box img {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
     /*页脚*/
-
+    #footer {
+        background-color: #2c3339;
+        height: 262px;
+    }
+    .footer-box {
+        width: 960px;
+        margin: 0 auto;
+    }
+    .footer-information {
+        float: left;
+        margin: 92px 0 0 5px;
+    }
+    .footer-information .logo {
+        width: 234px;
+        height: 22px;
+        margin-bottom: 30px;
+        background: url(../img/icon.png) 0 -117px no-repeat;
+    }
+    .footer-information p {
+        font: 12.5px "Microsoft YaHei";
+        color: #bebfc0;
+    }
+    .footer-information p + p {
+        margin-top: 12px;
+    }
+    .footer-hotlink {
+        float: right;
+        margin: 75px 5px 0 0;
+    }
+    .footer-hotlink dl {
+        float: left;
+    }
+    .footer-hotlink dl + dl {
+        margin-left: 100px;
+    }
+    .footer-hotlink dt {
+        font: 12.5px/2 "Microsoft YaHei";
+        color: #bebfc0;
+    }
+    .footer-hotlink a {
+        font: 14.5px/2 "Microsoft YaHei";
+        color: #bebfc0;
+    }
+    .footer-hotlink a:hover {
+        text-decoration: underline;
+    }
+    .footer-hotlink .weibo {
+        position: relative;
+    }
+    .footer-hotlink .weibo-logo {
+        position: absolute;
+        top: 8px;
+        left: 40px;
+        width: 20px;
+        height: 16px;
+        background: url(../img/icon.png) -39px -85px no-repeat;
+    }
     /*媒体检测*/
     @media screen and (max-width: 1205px) {
-        #top-advertisement .text-box {
+        #top-ad .box {
             width: 960px;
         }
     }
