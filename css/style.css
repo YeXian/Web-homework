@@ -113,9 +113,42 @@
     .nav-search:hover {
         background-position: -19px -85px;
     }
-    /*banner*/
-    .index-banner > img {
+    /*轮播图*/
+    #index-banner {
+        position: relative;
         width: 100%;
+        height: 460px;
+        overflow: hidden;
+        background-color: #fff;
+    }
+    #index-banner .item {
+        position: absolute;
+        left: 50%;
+        margin-left: -826px;
+        display: none;
+    }
+    #index-banner .active {
+        display: block;
+    }
+    #index-banner .pointer {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        margin-left: -26px;
+    }
+    #index-banner .pointer i {
+        display: block;
+        float: left;        
+        width: 10px;
+        height: 10px;
+        background: url(../img/icon.png)  -32px -105px no-repeat;
+        cursor: pointer;
+    }
+    #index-banner .pointer i.current {
+        background: url(../img/icon.png)  -21px -105px no-repeat;
+    }
+    #index-banner .pointer i + i {
+        margin-left: 11px;
     }
     /*主页网站推广*/
     .index-promotion {
@@ -172,6 +205,7 @@
         position: relative;
         height: 220px;
         overflow: hidden;
+        background-color: #fff;
     }
     .m-column .container {
         position: absolute;
