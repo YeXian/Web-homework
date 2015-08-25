@@ -73,7 +73,55 @@ function removeClass(element, oldClassName) {
 }
 
 // 轮播图部分
+// 先获取当前为active的类。
 // 给指示器添加点击事件，显示对应图片
-var banner = document.getElementById('index-banner');
-var bannerImg = banner.getElementsByClassName('item');
-var points = banner.getElementsByTagName('i');
+// var banner = document.getElementById('index-banner');
+// var bannerImg = banner.getElementsByClassName('item');
+// var points = banner.getElementsByTagName('i');
+// for (var i = 0; i < points.length; i++) {
+//     addEvent(points[i], )
+// }
+// function changeBanner(event, img) {
+    
+// }
+
+//cookie设置相关函数
+function setCookie(name, value, expires) {
+    var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+    if (expires instanceof Date) {
+        cookieText += '; expires=' + expires.toGMTString();
+    }
+    document.cookie = cookieText;
+}
+function getCookie(cookieName) {
+    var name = encodeURIComponent(cookieName) + '=';
+    var cookieStart = document.cookie.indexOf(name);
+    var cookieValue = null;
+    if (cookieStart > -1) {
+        var cookieEnd = document.cookie.indexOf(';' ,cookieStart);
+        //当cookie值在cookie最后一项时，末尾是没有';'号的，这是为了防止这种情况下返回值出错。
+        if (cookieEnd == -1) {
+            cookieEnd = document.cookie.length;
+        }
+        cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + name.length, cookieEnd));
+    }
+    return cookieValue;
+}
+//顶部广告栏显示与cookie设置
+function getTopAd() {
+    var status = getCookie('top-ad');
+    //默认不显示顶部提醒，如果对应cookie值为空，则显示顶部提醒。
+    if (!status) {
+        document.getElementById('top-ad').style['display'] = 'block';
+    }
+}
+//浏览器onload时，执行getTopAd()。
+window.onload = getTopAd();
+var ad = document.getElementById('top-ad');
+var closeLink = ad.getElementsByClassName('close')[0];
+//给不再提醒按钮绑定点击事件，设置cookie。
+addEvent(closeLink, 'click', function() {
+    var date = new Date('January 1, 2026');
+    setCookie('top-ad', '1', date);
+    document.getElementById('top-ad').style['display'] = '';
+});
