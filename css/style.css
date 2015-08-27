@@ -241,43 +241,118 @@
         float: left;
         width: 960px;
     }    
-    /* class Tab菜单 */
-    .m-classtab {
+    /* lesson Tab菜单 */
+    .m-lessontab {
         width: 400px;
         box-shadow: 0 1px 1px 1px #d4d3d3;
     }
-    .m-classtab li{
+    .m-lessontab li{
         float: left;
         width: 200px;
         height: 50px;
         font: 20px/51px "Microsoft YaHei";
         text-align: center;
+        background-color: #fff;
+        color: #666;
+        cursor: pointer;
     }
-    .m-classtab .design {
+    .m-lessontab .current, .m-lessontab li:hover{
         background-color: #39a030;
         color: #fff;
     }
-    .m-classtab .language {
-        background-color: #fff;
-        color: #666;
-    }
-    /* class 课程信息 */
-    .m-classlist {
+    /* lesson 课程信息 */
+    .m-lessonlist {
         margin-top: 30px;
     }
-    .m-classlist .col {
+    .m-lessonlist .col {
         float: left;
     }
-    .m-classlist .col + .col{
+    .m-lessonlist .col + .col{
         margin-left: 20px;
     }
-    .m-classlist .item {
+    .m-lessonlist .item {
+        display: block;
+        position: relative;
         width: 225px;
         height: 228px;
         background-color: #fff;
+        outline: 1px solid #f1f1f1;
     }
-    .m-classlist .item + .item {
+    .m-lessonlist .item:hover {
+        box-shadow: 0 3px 4px 1px #e6e6e6;
+    }
+    .m-lessonlist .item + .item {
         margin-top: 20px;
+    }
+    .m-lessonlist .item img {
+        padding: 1px 1px 0 1px;
+        width: 223px;
+        height: 124px;
+    }
+    .m-lessonlist .item .text {
+        margin-top: 10px;
+        padding-left: 5px;
+    }
+    .m-lessonlist .item-text{
+        margin-top: 10px;
+        font: 12px/1 "Microsoft YaHei";
+    }
+    .m-lessonlist .item .title {
+        width: 220px;
+        font: 12px/13px "Microsoft YaHei";
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        color: #333;
+    }
+    .m-lessonlist .item:hover .title {
+        color: #39a303;
+    }
+    .m-lessonlist .item .auth {
+        color: #999;
+    }
+    .m-lessonlist .item .num {
+        display: inline-block;
+        height: 16px;
+        padding-right: 3px;
+        font: 12px/16px Aril;
+        text-indent: 17px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        color: #999;
+        background: url(../img/icon.png) -238px -85px no-repeat;
+    }
+    .m-lessonlist .item .price {
+        color: #ff3f00;
+        font-weight: 700;
+    }
+    /*课程信息浮动框*/
+    .m-lessonflow {
+        /*display: none;*/
+        position: absolute;
+        z-index: 998;
+        top: -10px;
+        left: -10px;
+        width: 479px;
+        height: 238px;
+        background-color: #fff;
+    }
+    .m-lessonflow img{
+        float: left;
+        margin: 10px 0 0 10px;
+    }
+    .m-lessonflow .flow-text {
+        float: left;
+        margin: 15px 0 0 18px;
+    }
+    .m-lessonflow .description {
+        box-sizing: border-box;
+        height: 83px;
+        padding: 15px 30px 0 21px;
+        margin-top: 20px;
+        font: 14px/24px "Microsoft YaHei";
+        color: #666;
+        background-color: #f8f8f8;
     }
     /* 右侧边栏 */
     .main-side {

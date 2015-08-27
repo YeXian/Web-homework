@@ -107,6 +107,7 @@ function getCookie(cookieName) {
     }
     return cookieValue;
 }
+
 //顶部广告栏显示与cookie设置
 function getTopAd() {
     var status = getCookie('top-ad');
@@ -125,3 +126,20 @@ addEvent(closeLink, 'click', function() {
     setCookie('top-ad', '1', date);
     document.getElementById('top-ad').style['display'] = '';
 });
+
+//课程信息加载
+function updateLesson(data) {
+    data = JSON.parse(data);
+    // console.log(data);
+}
+var lessonXHR = new XMLHttpRequest;
+lessonXHR.onreadystatechange = function() {
+    if (lessonXHR.readyState == 4) {
+        if ((lessonXHR.status >= 200 && lessonXHR.status < 300) || lessonXHR.status == 304) {
+            updateLesson(lessonXHR.responseText);
+        }
+    }
+}
+// lessonXHR.open('get', 'http://study.163.com/webDev/couresByCategory.htm?pageNo=1&psize=20&type=10', true);
+// lessonXHR.send(null);
+
