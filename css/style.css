@@ -289,7 +289,7 @@
         width: 223px;
         height: 124px;
     }
-    .m-lessonlist .item .text {
+    .m-lessonlist .item .item-box {
         margin-top: 10px;
         padding-left: 5px;
     }
@@ -297,7 +297,7 @@
         margin-top: 10px;
         font: 12px/1 "Microsoft YaHei";
     }
-    .m-lessonlist .item .title {
+    .m-lessonlist .item-title {
         width: 220px;
         font: 12px/13px "Microsoft YaHei";
         text-overflow: ellipsis;
@@ -305,13 +305,13 @@
         white-space: nowrap;
         color: #333;
     }
-    .m-lessonlist .item:hover .title {
+    .m-lessonlist .item:hover .item-title {
         color: #39a303;
     }
-    .m-lessonlist .item .auth {
+    .m-lessonlist .item-box .auth {
         color: #999;
     }
-    .m-lessonlist .item .num {
+    .m-lessonlist .item-box .num {
         display: inline-block;
         height: 16px;
         padding-right: 3px;
@@ -322,7 +322,7 @@
         color: #999;
         background: url(../img/icon.png) -238px -85px no-repeat;
     }
-    .m-lessonlist .item .price {
+    .m-lessonlist .item-box .price {
         color: #ff3f00;
         font-weight: 700;
     }
@@ -341,9 +341,26 @@
         float: left;
         margin: 10px 0 0 10px;
     }
-    .m-lessonflow .flow-text {
+    .m-lessonflow .flow-box {
         float: left;
         margin: 15px 0 0 18px;
+    }
+    .m-lessonflow .flow-title {
+        font: 18px/1 "Microsoft YaHei";
+        color: #333;
+    }
+    .m-lessonflow .flow-text {
+        font: 12px/20px "Microsoft YaHei";
+        text-indent: 3px;
+        color: #666;
+    }
+    .m-lessonflow .num {
+        margin-top: 10px;
+        text-indent: 19px;
+        background: url(../img/icon.png) -237px -83px no-repeat;
+    }
+    .m-lessonflow .auth {
+        margin-top: 5px;
     }
     .m-lessonflow .description {
         box-sizing: border-box;
