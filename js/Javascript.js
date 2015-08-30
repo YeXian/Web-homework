@@ -108,7 +108,7 @@ function getCookie(cookieName) {
     return cookieValue;
 }
 
-//顶部广告栏显示与cookie设置
+//1、顶部广告栏显示与cookie设置
 function getTopAd() {
     var status = getCookie('top-ad');
     //默认不显示顶部提醒，如果对应cookie值为空，则显示顶部提醒。
@@ -117,7 +117,7 @@ function getTopAd() {
     }
 }
 //浏览器onload时，执行getTopAd()。
-window.onload = getTopAd();
+addEvent(window, 'load', getTopAd);
 var ad = document.getElementById('top-ad');
 var closeLink = ad.getElementsByClassName('close')[0];
 //给不再提醒按钮绑定点击事件，设置cookie。
@@ -127,19 +127,222 @@ addEvent(closeLink, 'click', function() {
     document.getElementById('top-ad').style['display'] = '';
 });
 
-//课程信息加载
-function updateLesson(data) {
-    data = JSON.parse(data);
-    // console.log(data);
+// 2、关注与登录cookie设置
+// 表单对象
+var loginForm = document.getElementById('login-form');
+var userName = loginForm.name;
+var userPassword = loginForm.password;
+// 登录框对象
+var login = {
+    //打开登录框
+    open: function() {
+        var element = document.getElementById('login');
+        element.style['display'] = 'block';
+    },
+    //关闭登录框
+    close: function() {
+        var element = document.getElementById('login');
+        element.style['display'] = 'none';
+    },
+    //用户名输入框的清除
+    cleanUserName: function() {
+        // var userName = loginForm.name;
+        if (userName.value == '帐号') {
+            userName.value = '';
+        }
+    },
+    //密码输入框的清除与输入类型转换
+    cleanPassword: function() {
+        // var userPassword = loginForm.password;
+        if (userPassword.value == '密码') {
+            userPassword.value = '';
+            userPassword.type = 'password';
+        }
+    },
+    //表单提交的事件函数
+    loginSubmit: function(event) {
+        // var userName = document.getElementById('login-name');
+        // var userPassword = document.getElementById('login-password');
+        //表单验证
+        if (userName.value == '' || userName.value == '帐号') {
+            addClass(userName, 'empty');
+            event.preventDefault();
+            return;
+        }
+        if (userPassword.value == '' || userPassword.value == '密码') {
+            addClass(password, 'empty');
+            event.preventDefault();
+            return;
+        }
+    },
+    //输入状态清除红色边框
+    userInputHandler: function() {
+        // var userName = document.getElementById('login-name');
+        removeClass(userName, 'empty');
+    },
+    //输入状态清除红色边框
+    userPasswordHandler: function() {
+        // var userPassword = document.getElementById('login-password');
+        removeClass(userPassword, 'empty');
+    },
+    // 调用Ajax发送登录请求
+    loginXHR: function(userName, password) {
+        var loginXHR = new XMLHttpRequest;
+        loginXHR.onreadystatechange = function() {
+            if (loginXHR.readyState == 4) {
+                if ((loginXHR.status >= 200 && loginXHR.status < 300) || loginXHR.status == 304) {
+                    setLoginCookie(loginXHR.responseText);
+                }
+            }
+        }
+        function setLoginCookie(status) {
+            if (status == 1) {
+                setCookie('loginSuc', '1', new Date('January 1, 2026'));
+            }
+            //在登录成功后调用关注API
+            clickFocusHandler();
+        }
+        //将用户名与密码进行MD5加密。
+        userName = hex_md5(userName);
+        password = hex_md5(password);
+        //设置url
+        var url = 'http://study.163.com/webDev/login.htm?' + 'userName=' + encodeURIComponent(userName) + '&password=' + encodeURIComponent(password);
+        loginXHR.open('get', url, true);
+        loginXHR.send(null);
+    }
 }
-var lessonXHR = new XMLHttpRequest;
-lessonXHR.onreadystatechange = function() {
-    if (lessonXHR.readyState == 4) {
-        if ((lessonXHR.status >= 200 && lessonXHR.status < 300) || lessonXHR.status == 304) {
-            updateLesson(lessonXHR.responseText);
+// login.loginXHR('studyOnline', 'study.163.com');
+//点击关注按钮的事件函数
+function clickFocusHandler() {
+    var loginStatus = getCookie('loginSuc');
+    //判断有无登录cookie，无则弹出登录框
+    if (!loginStatus) {
+        login.open();
+    }
+    else {
+        setCookie('followSuc', '1', new Date('January 1, 2026'));
+        changeFocusStatus();
+    }
+}
+// 根据followSuc的cookie值改变显示的关注状态
+function changeFocusStatus() {
+    //分别获取显示关注和已关注的元素
+    var focusElement = document.getElementById('focus');
+    var unfocusElement = getElementsByClassName(document, 'nav-unfocus')[0];
+    //获取关注的cookie状态
+    var status = getCookie('followSuc');
+    //根据用户的登录状态和关注的cookie值来决定显示的关注状态
+    if (getCookie('loginSuc') && status) {
+        focusElement.style['display'] = 'none';
+        unfocusElement.style['display'] = 'block';
+    }
+    else {
+        focusElement.style['display'] = 'block';
+        unfocusElement.style['display'] = 'none';
+    }
+}
+//在window的load时候判断关注的状态
+addEvent(window, 'load', changeFocusStatus);
+//给关注按钮绑定事件
+addEvent(document.getElementById('focus'), 'click', clickFocusHandler);
+//给取消按钮绑定事件
+addEvent(document.getElementById('unfocus'), 'click', function(event) {
+    setCookie('followSuc', '');
+    changeFocusStatus();
+})
+//表单提交的事件函数
+addEvent(loginForm, 'submit', login.loginSubmit);
+
+//6、课程信息加载模块
+
+//定位到课程信息模块元素。
+var lessonContent = document.getElementById('main-content');
+//根据参数提交Ajax请求并更新课程列表
+function updateLessonXHR(pageNo, psize, type) {
+    var lessonXHR = new XMLHttpRequest;
+    lessonXHR.onreadystatechange = function() {
+        if (lessonXHR.readyState == 4) {
+            if ((lessonXHR.status >= 200 && lessonXHR.status < 300) || lessonXHR.status == 304) {
+                update(lessonXHR.responseText);
+            }
+        }
+    }
+    //根据函数参数配置url的值
+    var url = 'http://study.163.com/webDev/couresByCategory.htm?' + 'pageNo=' + pageNo + '&psize=' + psize + '&type=' + type;
+    lessonXHR.open('get', url, true);
+    lessonXHR.send(null);
+
+    //数据更新函数，根据返回的responseText，更新课程信息列表。
+    function update(data) {
+        var dataList = JSON.parse(data).list;
+        var itemArr = getElementsByClassName(lessonContent, 'item');
+        for (var i = 0; i < dataList.length; i++) {
+            //获取课程信息HTML中每个对应元素的引用。
+            var item = {};
+            item.titleArr =  getElementsByClassName(itemArr[i], 'title');
+            item.imgArr = itemArr[i].getElementsByTagName('img');
+            item.autherArr = getElementsByClassName(itemArr[i], 'auth');
+            item.numberArr = getElementsByClassName(itemArr[i], 'num');
+            item.price = getElementsByClassName(itemArr[i], 'price')[0];
+            item.category = getElementsByClassName(itemArr[i], 'category')[0];
+            item.description = getElementsByClassName(itemArr[i], 'description')[0];
+            // 给每个对应的元素填充内容
+            for (var j = 0; j < 2; j++) {
+                item.titleArr[j].innerText = dataList[i].name;
+                item.imgArr[j].src = dataList[i].middlePhotoUrl;
+            }
+            item.autherArr[0].innerText = dataList[i].provider;
+            item.autherArr[1].innerText = '发布者：' + dataList[i].provider;
+            item.numberArr[0].innerText = dataList[i].learnerCount;
+            item.numberArr[1].innerText = dataList[i].learnerCount + '人在学';
+            if (dataList[i].price == 0) {
+                item.price.innerText = '免费';
+            }
+            else {
+                item.price.innerText = '￥' + dataList[i].price;
+            }
+            item.category.innerText = dataList[i].categoryName;
+            item.description.innerText = dataList[i].description;
         }
     }
 }
-// lessonXHR.open('get', 'http://study.163.com/webDev/couresByCategory.htm?pageNo=1&psize=20&type=10', true);
-// lessonXHR.send(null);
+//根据当前的菜单选项和分页器的选中的值，调用Ajax更新课程信息
+function updateLesson() {
+    var tab = lessonContent.getElementsByClassName('current')[0];
+    var page = lessonContent.getElementsByClassName('current')[1];
+    updateLessonXHR(page.textContent, '20', tab.value);
+}
+//加载函数
+updateLesson();
+//给TAB菜单和分页器绑定事件，使点击后能更新课程信息。
+//Tab菜单的事件函数
+function clickTabHandler(event) {
+    var tabElement = getElementsByClassName(lessonContent, 'm-lessontab')[0];
+    var tabCurrent = getElementsByClassName(tabElement, 'current')[0];
+    //将页数重设为1
+    var pageElement = getElementsByClassName(lessonContent, 'page-num');
+    for (var i = 0; i < pageElement.length; i++) {
+        removeClass(pageElement[i], 'current');
+    }
+    addClass(pageElement[0], 'current');
+    //判断当前点击是否为已选状态，否则刷新课程信息
+    if (event.target != tabCurrent) {
+        removeClass(tabCurrent, 'current');
+        addClass(event.target, 'current');
+        updateLesson();
+    }
+}
+// Tab菜单绑定点击事件
+addEvent(getElementsByClassName(lessonContent, 'm-lessontab')[0], 'click', clickTabHandler);
+//分页器的事件函数
+function clickPageHandler(event) {
+    var pageElement = getElementsByClassName(lessonContent, 'page-num');
+    for (var i = 0; i < pageElement.length; i++) {
+        removeClass(pageElement[i], 'current');
+    }
+    addClass(event.target, 'current');
+    updateLesson();
+}
+addEvent(getElementsByClassName(lessonContent, 'm-pages')[0], 'click', clickPageHandler);
+
 
