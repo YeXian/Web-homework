@@ -179,6 +179,7 @@
     .login-title {
         padding: 30px 0 20px 39px;
         font: 700 18px/1 "Microsoft YaHei";
+        color: #444;
     }
     #login-form {
         padding-left:40px; 
@@ -193,6 +194,9 @@
         border: 1px solid #dfdfdf;
         background-color: #fafafa;
         box-shadow: inset 2px 2px 0 0 #f1f1f1;
+    }
+    #login-form .inputStatus {
+        color: #444;
     }
     #login-form .empty {
         border: 1px solid #e00;
@@ -209,6 +213,15 @@
         border-width: 0;
         background-color: #1aa43a;
         box-shadow: 2px 2px 0 0 #d5e3da;
+    }
+    .login-error {
+        display: none;
+        position: absolute;
+        width: 100%;
+        top: 183px;
+        text-align: center;
+        font: 12px/1 'Microsoft YaHei';
+        color: #f00;
     }
     /* 轮播图 */
     #index-banner {

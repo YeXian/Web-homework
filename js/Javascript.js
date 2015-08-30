@@ -72,19 +72,6 @@ function removeClass(element, oldClassName) {
     element.setAttribute('class', className);
 }
 
-// 轮播图部分
-// 先获取当前为active的类。
-// 给指示器添加点击事件，显示对应图片
-// var banner = document.getElementById('index-banner');
-// var bannerImg = banner.getElementsByClassName('item');
-// var points = banner.getElementsByTagName('i');
-// for (var i = 0; i < points.length; i++) {
-//     addEvent(points[i], )
-// }
-// function changeBanner(event, img) {
-    
-// }
-
 //cookie设置相关函数
 function setCookie(name, value, expires) {
     var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
@@ -144,46 +131,20 @@ var login = {
         var element = document.getElementById('login');
         element.style['display'] = 'none';
     },
-    //用户名输入框的清除
+    //事件函数：点击用户名输入框的清除
     cleanUserName: function() {
-        // var userName = loginForm.name;
         if (userName.value == '帐号') {
             userName.value = '';
+            addClass(userName, 'inputStatus');
         }
     },
-    //密码输入框的清除与输入类型转换
+    //事件函数：点击密码输入框的清除与输入类型转换
     cleanPassword: function() {
-        // var userPassword = loginForm.password;
         if (userPassword.value == '密码') {
             userPassword.value = '';
             userPassword.type = 'password';
+            addClass(userPassword, 'inputStatus');
         }
-    },
-    //表单提交的事件函数
-    loginSubmit: function(event) {
-        // var userName = document.getElementById('login-name');
-        // var userPassword = document.getElementById('login-password');
-        //表单验证
-        if (userName.value == '' || userName.value == '帐号') {
-            addClass(userName, 'empty');
-            event.preventDefault();
-            return;
-        }
-        if (userPassword.value == '' || userPassword.value == '密码') {
-            addClass(password, 'empty');
-            event.preventDefault();
-            return;
-        }
-    },
-    //输入状态清除红色边框
-    userInputHandler: function() {
-        // var userName = document.getElementById('login-name');
-        removeClass(userName, 'empty');
-    },
-    //输入状态清除红色边框
-    userPasswordHandler: function() {
-        // var userPassword = document.getElementById('login-password');
-        removeClass(userPassword, 'empty');
     },
     // 调用Ajax发送登录请求
     loginXHR: function(userName, password) {
@@ -196,11 +157,19 @@ var login = {
             }
         }
         function setLoginCookie(status) {
+            //登录成功后设置cookie
             if (status == 1) {
                 setCookie('loginSuc', '1', new Date('January 1, 2026'));
+                //关闭登录窗口
+                login.close();
+                //在登录成功后调用关注API
+                clickFocusHandler();
             }
-            //在登录成功后调用关注API
-            clickFocusHandler();
+            if (status == 0) {
+                userPassword.value = '';
+                var error = getElementsByClassName(document, 'login-error')[0];
+                error.style['display'] = 'block';
+            }
         }
         //将用户名与密码进行MD5加密。
         userName = hex_md5(userName);
@@ -209,9 +178,25 @@ var login = {
         var url = 'http://study.163.com/webDev/login.htm?' + 'userName=' + encodeURIComponent(userName) + '&password=' + encodeURIComponent(password);
         loginXHR.open('get', url, true);
         loginXHR.send(null);
+    },
+    //事件函数：表单提交的事件函数
+    loginSubmit: function(event) {
+        //表单验证
+        if (userName.value == '' || userName.value == '帐号') {
+            addClass(userName, 'empty');
+            event.preventDefault();
+            return;
+        }
+        if (userPassword.value == '' || userPassword.value == '密码') {
+            addClass(password, 'empty');
+            event.preventDefault();
+            return;
+        }
+        //阻止默认的提交事件，用Ajax提交表单
+        event.preventDefault();
+        login.loginXHR(userName.value, userPassword.value);
     }
 }
-// login.loginXHR('studyOnline', 'study.163.com');
 //点击关注按钮的事件函数
 function clickFocusHandler() {
     var loginStatus = getCookie('loginSuc');
@@ -243,15 +228,43 @@ function changeFocusStatus() {
 }
 //在window的load时候判断关注的状态
 addEvent(window, 'load', changeFocusStatus);
-//给关注按钮绑定事件
+//给关注按钮绑定事件：改变cookie状态，刷新关注状态的显示
 addEvent(document.getElementById('focus'), 'click', clickFocusHandler);
-//给取消按钮绑定事件
+//给取消关注按钮绑定事件：改变cookie状态，刷新关注状态的显示
 addEvent(document.getElementById('unfocus'), 'click', function(event) {
     setCookie('followSuc', '');
     changeFocusStatus();
-})
-//表单提交的事件函数
+});
+//聚焦用户名与密码输入框时清空输入框的初始状态
+addEvent(userName, 'focus', login.cleanUserName);
+addEvent(userPassword, 'focus', login.cleanPassword);
+//给用户名输入框绑定事件：输入时取消红框，不显示错误信息。
+addEvent(userName, 'input', function() {
+    removeClass(userName, 'empty');
+    var error = getElementsByClassName(document, 'login-error')[0];
+    error.style['display'] = '';
+});
+//给密码输入框绑定事件：用输入时取消红框，并不显示错误信息。
+addEvent(userPassword, 'input', function() {
+    removeClass(userPassword, 'empty');
+    var error = getElementsByClassName(document, 'login-error')[0];
+    error.style['display'] = '';
+});
+//绑定表单提交的事件，验证表单与Ajax提交
 addEvent(loginForm, 'submit', login.loginSubmit);
+
+// 轮播图部分
+// 先获取当前为active的类。
+// 给指示器添加点击事件，显示对应图片
+// var banner = document.getElementById('index-banner');
+// var bannerImg = banner.getElementsByClassName('item');
+// var points = banner.getElementsByTagName('i');
+// for (var i = 0; i < points.length; i++) {
+//     addEvent(points[i], )
+// }
+// function changeBanner(event, img) {
+    
+// }
 
 //6、课程信息加载模块
 
@@ -344,5 +357,3 @@ function clickPageHandler(event) {
     updateLesson();
 }
 addEvent(getElementsByClassName(lessonContent, 'm-pages')[0], 'click', clickPageHandler);
-
-
