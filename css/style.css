@@ -238,6 +238,7 @@
     }
     /* 左侧 */
     .main-content {
+        position: relative;
         float: left;
         width: 960px;
     }    
@@ -276,10 +277,10 @@
         width: 225px;
         height: 228px;
         background-color: #fff;
-        outline: 1px solid #f1f1f1;
+        box-shadow: 0 2px 4px 0 #e6e6e6;
     }
     .m-lessonlist .item:hover {
-        box-shadow: 0 3px 4px 1px #e6e6e6;
+        box-shadow: 0 3px 8px 1px #d0cfd0;
     }
     .m-lessonlist .item + .item {
         margin-top: 20px;
@@ -333,9 +334,11 @@
         z-index: 998;
         top: -10px;
         left: -10px;
-        width: 479px;
+        width: 480px;
         height: 238px;
         background-color: #fff;
+        outline: 1px solid #d0cfd0;
+        box-shadow: 0 0 8px 1px #d0cfd0;
     }
     .m-lessonflow img{
         float: left;
@@ -370,6 +373,35 @@
         font: 14px/24px "Microsoft YaHei";
         color: #666;
         background-color: #f8f8f8;
+    }
+    /*分页器*/
+    .m-pages {
+        position: absolute;
+        right: 0;
+        bottom: -50px;
+        font: 14px/20px "Microsoft YaHei";
+    }
+    .m-pages a {
+        display: inline-block;
+        margin-left: 10px;
+    }
+    .m-pages .page-num {
+        width: 20px;
+        text-align: center;
+        color: #666;
+    }
+    .m-pages .current {
+        color: #39a030;
+    }
+    .m-pages .page-num:hover {
+        background-color: #9dd8b1;
+        color: #fff;
+    }
+    .m-pages .page-go {
+        width: 30px;
+        text-align: center;
+        color: #fff;
+        background-color: #9dd8b1;
     }
     /* 右侧边栏 */
     .main-side {
