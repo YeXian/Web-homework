@@ -32,7 +32,15 @@ function getElementsByClassName(element, ClassName) {
     }
     return results; 
 }
-
+//在FireFox中兼容innerText 
+if(!('innerText' in document.body)) {
+    HTMLElement.prototype.__defineGetter__('innerText', function() {
+        return this.textContent;
+    });
+    HTMLElement.prototype.__defineSetter__('innerText', function(s) {
+        return this.textContent = s;
+    });
+}
 //事件绑定/解除函数
 // 给一个element绑定一个针对event事件的响应，响应函数为listener
 function addEvent(element, event, listener) {
@@ -106,7 +114,7 @@ function getTopAd() {
 //浏览器onload时，执行getTopAd()。
 addEvent(window, 'load', getTopAd);
 var ad = document.getElementById('top-ad');
-var closeLink = ad.getElementsByClassName('close')[0];
+var closeLink = getElementsByClassName(ad, 'close')[0];
 //给不再提醒按钮绑定点击事件，设置cookie。
 addEvent(closeLink, 'click', function() {
     var date = new Date('January 1, 2026');
@@ -181,6 +189,7 @@ var login = {
     },
     //事件函数：表单提交的事件函数
     loginSubmit: function(event) {
+        var event = event || window.event;
         //表单验证
         if (userName.value == '' || userName.value == '帐号') {
             addClass(userName, 'empty');
@@ -253,11 +262,13 @@ addEvent(userPassword, 'input', function() {
 //绑定表单提交的事件，验证表单与Ajax提交
 addEvent(loginForm, 'submit', login.loginSubmit);
 
-// 轮播图部分
+// 3、点击导航和内容区的了解更多,在新窗口打开连接
+
+// 4、轮播图部分
 // 先获取当前为active的类。
 // 给指示器添加点击事件，显示对应图片
 // var banner = document.getElementById('index-banner');
-// var bannerImg = banner.getElementsByClassName('item');
+// var bannerImg = getElementsByClassName(banner, 'item');
 // var points = banner.getElementsByTagName('i');
 // for (var i = 0; i < points.length; i++) {
 //     addEvent(points[i], )
@@ -266,8 +277,7 @@ addEvent(loginForm, 'submit', login.loginSubmit);
     
 // }
 
-//6、课程信息加载模块
-
+//5、课程信息加载模块 - Tab切换
 //定位到课程信息模块元素。
 var lessonContent = document.getElementById('main-content');
 //根据参数提交Ajax请求并更新课程列表
@@ -284,10 +294,10 @@ function updateLessonXHR(pageNo, psize, type) {
     var url = 'http://study.163.com/webDev/couresByCategory.htm?' + 'pageNo=' + pageNo + '&psize=' + psize + '&type=' + type;
     lessonXHR.open('get', url, true);
     lessonXHR.send(null);
-
     //数据更新函数，根据返回的responseText，更新课程信息列表。
     function update(data) {
-        var dataList = JSON.parse(data).list;
+        data = JSON.parse(data);
+        var dataList = data.list;
         var itemArr = getElementsByClassName(lessonContent, 'item');
         for (var i = 0; i < dataList.length; i++) {
             //获取课程信息HTML中每个对应元素的引用。
@@ -321,15 +331,16 @@ function updateLessonXHR(pageNo, psize, type) {
 }
 //根据当前的菜单选项和分页器的选中的值，调用Ajax更新课程信息
 function updateLesson() {
-    var tab = lessonContent.getElementsByClassName('current')[0];
-    var page = lessonContent.getElementsByClassName('current')[1];
+    var tab = getElementsByClassName(lessonContent, 'current')[0];
+    var page = getElementsByClassName(lessonContent, 'current')[1];
     updateLessonXHR(page.textContent, '20', tab.value);
 }
-//加载函数
-updateLesson();
+//window的load事件加载课程信息。
+addEvent(window, 'load', updateLesson);
 //给TAB菜单和分页器绑定事件，使点击后能更新课程信息。
 //Tab菜单的事件函数
 function clickTabHandler(event) {
+    var event = event || window.event;
     var tabElement = getElementsByClassName(lessonContent, 'm-lessontab')[0];
     var tabCurrent = getElementsByClassName(tabElement, 'current')[0];
     //将页数重设为1
@@ -349,6 +360,7 @@ function clickTabHandler(event) {
 addEvent(getElementsByClassName(lessonContent, 'm-lessontab')[0], 'click', clickTabHandler);
 //分页器的事件函数
 function clickPageHandler(event) {
+    var event = event || window.event;
     var pageElement = getElementsByClassName(lessonContent, 'page-num');
     for (var i = 0; i < pageElement.length; i++) {
         removeClass(pageElement[i], 'current');
@@ -356,4 +368,103 @@ function clickPageHandler(event) {
     addClass(event.target, 'current');
     updateLesson();
 }
+// 分页器绑定点击事件
 addEvent(getElementsByClassName(lessonContent, 'm-pages')[0], 'click', clickPageHandler);
+
+//6、查看课程详情，浮层信息。
+// 用一个变量保存计时器，用于计算悬停时间。
+var mouseHoverTimer;
+//鼠标进入元素的事件函数
+function mouseHover(event) {
+    var event = event || window.event;
+    var element = event.target;
+    var flow = getElementsByClassName(element, 'm-lessonflow')[0];
+    //鼠标进入后，计时器开始，600毫秒后触发打开浮层窗口。
+    mouseHoverTimer = setTimeout(openFlow, 600);
+    //打开浮层的函数
+    function openFlow() {
+        addClass(flow, 'cur');
+    }
+}
+//鼠标离开元素的事件函数
+function hoverCancel(event) {
+    var event = event || window.event;
+    var element = event.target;
+    var flow = getElementsByClassName(element, 'm-lessonflow')[0];
+    //计时器停止
+    clearTimeout(mouseHoverTimer);
+    //浮层关闭
+    removeClass(flow, 'cur');
+}
+// 用一个数组保存这个容器下所有的item条目,lessonContent为课程信息模块
+var lessonItemArr = getElementsByClassName(lessonContent, 'item');
+for (var i = 0; i < lessonItemArr.length; i++) {
+    //给所有条目绑定鼠标进入和鼠标移开的事件
+    addEvent(lessonItemArr[i], 'mouseenter', mouseHover);
+    addEvent(lessonItemArr[i], 'mouseleave', hoverCancel);
+}
+//7、视频介绍模块
+//视频页面打开的事件函数
+function openVideoPage(event) {
+    var videoPage = document.getElementById('video-page');
+    videoPage.style.display = 'block';
+}
+//点击关闭的事件函数：关闭窗口和暂停视频播放
+function closeVideoPage(event) {
+    var videoPage = document.getElementById('video-page');
+    var video = videoPage.getElementsByTagName('video')[0];
+    video.pause();
+    videoPage.style.display = 'none';
+}
+//在HTML中添加onclick属性绑定。
+
+//热门推荐排行模块
+//定位到热门推荐模块，命名为rankElement
+var rankElement = getElementsByClassName(document, 'm-rank')[0];
+// 加载热门推荐排行函数
+function loadRank(event) {
+    var rankXHR = new XMLHttpRequest;
+    rankXHR.onreadystatechange = function() {
+        if (rankXHR.readyState == 4) {
+            if ((rankXHR.status >= 200 && rankXHR.status < 300) || rankXHR.status == 304) {
+                updateRank(rankXHR.responseText);
+            }
+        }
+    }
+    rankXHR.open('get', 'http://study.163.com/webDev/hotcouresByCategory.htm', true);
+    rankXHR.send(null);
+    function updateRank(data) {
+        //将data属性转化为JSON数组。
+        data = JSON.parse(data);
+        //获取模块中的每个条目，用数组保存起来。
+        var itemArr = getElementsByClassName(rankElement, 'item');
+        for (var i = 0; i < itemArr.length; i++) {
+            //定义每个条目的对象，包含图片，标题，人数属性与DOM结构对应。
+            var item = {};
+            item.img = itemArr[i].getElementsByTagName('img')[0];
+            item.name = getElementsByClassName(itemArr[i], 'item-name')[0];
+            item.number = getElementsByClassName(itemArr[i], 'num')[0];
+            //给每个条目对应的属性赋值。
+            item.img.src = data[i].smallPhotoUrl;
+            item.name.innerText = data[i].name;
+            item.name.title = data[i].name;
+            item.number.innerText = data[i].learnerCount;
+        }
+    }
+}
+//给window的load事件绑定加载热门推荐的事件函数
+addEvent(window, 'load', loadRank);
+//热门推荐的动画函数
+//获取到ul列表，为其增加动画。
+// var rankList = rankElement.getElementsByTagName('ul')[0];
+// //向上滚动函数
+// function moveUp(element) {
+//     var distanceFromBottom =  element.style.bottom;
+//     distanceFromBottom = '5px';
+//     // var step = function() {
+
+//     // }
+//     console.log(element);
+// }
+// moveUp(rankList);
+
