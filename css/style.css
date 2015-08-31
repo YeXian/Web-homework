@@ -238,15 +238,17 @@
         margin-left: -826px;
     }
     #index-banner .item {
-        display: none;
+        position: absolute;
     }
     #index-banner .active {
         display: block;
+        z-index: 1;
         /* 用调整margin-left的方式来做动画 */
         /* margin-left: 100%; */
     }
     #index-banner .pointer {
         position: absolute;
+        z-index: 2;
         bottom: 20px;
         left: 50%;
         margin-left: -26px;
@@ -259,7 +261,7 @@
         background: url(../img/icon.png)  -32px -105px no-repeat;
         cursor: pointer;
     }
-    #index-banner .pointer i.current {
+    #index-banner .pointer i.cur {
         background: url(../img/icon.png)  -21px -105px no-repeat;
     }
     #index-banner .pointer i + i {

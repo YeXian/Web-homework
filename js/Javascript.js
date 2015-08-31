@@ -262,21 +262,72 @@ addEvent(userPassword, 'input', function() {
 //绑定表单提交的事件，验证表单与Ajax提交
 addEvent(loginForm, 'submit', login.loginSubmit);
 
-// 3、点击导航和内容区的了解更多,在新窗口打开连接
-
+// 3、点击导航和内容区的了解更多,在新窗口打开连接，通过HTML实现
 // 4、轮播图部分
-// 先获取当前为active的类。
-// 给指示器添加点击事件，显示对应图片
-// var banner = document.getElementById('index-banner');
-// var bannerImg = getElementsByClassName(banner, 'item');
-// var points = banner.getElementsByTagName('i');
-// for (var i = 0; i < points.length; i++) {
-//     addEvent(points[i], )
-// }
-// function changeBanner(event, img) {
-    
-// }
-
+// 淡入动画
+function fadein(element) {
+    var opacity = 0;
+    var step = function() {
+        opacity = opacity + (1/100);
+        if (opacity < 1) {
+            element.style['opacity'] = opacity + '';
+        }
+        else {
+            element.style['opacity'] = 1 + '';
+            clearInterval(intervalID);
+        }
+    };
+    var intervalID = setInterval(step, 5);
+}
+//banner变换动画控制函数，传入的参数为要入场的banner序号，也可不传
+var bannerControl = function(num) {
+    //定位到banner容器
+    var bannerContent = document.getElementById('index-banner');
+    // 获取到3个banner的数组和指示器数组
+    var bannerArr = getElementsByClassName(bannerContent, 'item');
+    var pointerArr = bannerContent.getElementsByTagName('i');
+    //获取当前active的banner和current的指示器
+    var active = getElementsByClassName(bannerContent, 'active')[0];
+    var cur = getElementsByClassName(bannerContent, 'cur')[0];
+    // 确定下一个要入场的banner，如果传入了参数则为对应序号的banner
+    if (num) {
+        var nextBanner = bannerArr[num - 1];
+        var nextPointer = pointerArr[num - 1];
+    }
+    // 没有传参数则自动设置为下一个，如果是最后一个了，则为第一个banner
+    else {
+        var nextBanner = (active === bannerArr[2])? bannerArr[0] : active.nextElementSibling;
+        var nextPointer = (cur === pointerArr[2])? pointerArr[0] : cur.nextElementSibling;
+    }
+    //将当前banner透明度设置为0
+    active.style['opacity'] = '0';
+    //进场banner使用入场动画
+    fadein(nextBanner);
+    //改变表示当前banner和pointer的类名
+    removeClass(active, 'active');
+    addClass(nextBanner, 'active');
+    for (var i = 0; i < pointerArr.length; i++) {
+        pointerArr[i].className = '';
+    }
+    nextPointer.className = 'cur';
+};
+// 定义一个用于表示banner变化的计时器。
+var bannerTimer;
+// 停止banner变换的函数
+function stopChangeBanner() {
+    clearInterval(bannerTimer);
+}
+// 启用banner变换的函数
+function startChangeBanner() {
+    bannerTimer = setInterval(bannerControl, 5000);
+}
+// Banner的容器，用于在其上绑定鼠标事件来启停banner切换动画
+var bannerBox = getElementsByClassName(document, 'banner-box')[0];
+// 定义鼠标停留和离开banner元素的事件
+addEvent(bannerBox, 'mouseenter', stopChangeBanner);
+addEvent(bannerBox, 'mouseleave', startChangeBanner);
+//执行一次，让banner自动变换。
+startChangeBanner();
 //5、课程信息加载模块 - Tab切换
 //定位到课程信息模块元素。
 var lessonContent = document.getElementById('main-content');
@@ -456,15 +507,61 @@ function loadRank(event) {
 addEvent(window, 'load', loadRank);
 //热门推荐的动画函数
 //获取到ul列表，为其增加动画。
-// var rankList = rankElement.getElementsByTagName('ul')[0];
-// //向上滚动函数
-// function moveUp(element) {
-//     var distanceFromBottom =  element.style.bottom;
-//     distanceFromBottom = '5px';
-//     // var step = function() {
-
-//     // }
-//     console.log(element);
-// }
-// moveUp(rankList);
-
+var rankList = rankElement.getElementsByTagName('ul')[0];
+//向上滚动动画
+var moveUp = function() {
+    //distance：距最底部的距离
+    var distance = parseInt(rankList.style.bottom);
+    //每次滚动的距离为70
+    var target = distance + 70;
+    //滚动的实践动画
+    var step = function() {
+        if (distance < 700 && distance < target) {
+            distance = distance + 1;
+            rankList.style.bottom  = distance + 'px';
+        }
+        else {
+            clearInterval(intervalID);
+        }
+    };
+    var intervalID = setInterval(step, 5);
+};
+//向下滚动动画函数
+var moveDown = function() {
+    //distance：距最底部的距离
+    var distance = parseInt(rankList.style.bottom);
+    var target = distance - 70;
+    var step = function() {
+        if (distance > 0 && distance > target) {
+            distance = distance - 1;
+            rankList.style.bottom  = distance + 'px';
+        }
+        else {
+            clearInterval(intervalID);
+        }
+    };
+    var intervalID = setInterval(step, 5);
+};
+//用于保存向上滚动动画的定时器
+var upTimer;
+//用于保存向下滚动动画的定时器
+var downTimer;
+//用于控制上下滚动的函数
+var moveControl = function() {
+    var distance = parseInt(rankList.style.bottom);
+    //判断榜单的位置，根据位置切换动画。
+    //如果在最底部，取消下滚动画，启动上滚动画。
+    if (distance <= 0) {
+        clearInterval(downTimer);
+        upTimer = setInterval(moveUp, 5000);
+    }
+    //如果在最顶部，取消上滚动画，启动下滚动画。
+    if (distance >= 700) {
+        clearInterval(upTimer);
+        downTimer = setInterval(moveDown, 5000);
+    }
+};
+//先执行一次滚动控制函数
+moveControl();
+//之后每51秒执行一次，用于判断位置改变动画。
+var scrollControlTimer = setInterval(moveControl, 51000);
