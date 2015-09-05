@@ -41,7 +41,7 @@ if(!('innerText' in document.body)) {
         return this.textContent = s;
     });
 }
-//事件绑定/解除函数
+//兼容低版本浏览器的事件绑定/解除函数
 // 给一个element绑定一个针对event事件的响应，响应函数为listener
 function addEvent(element, event, listener) {
     if (!!element.addEventListener) {
@@ -71,13 +71,16 @@ function addClass(element, newClassName) {
 // 移除element中的样式oldClassName
 function removeClass(element, oldClassName) {
     var className = element.getAttribute('class');
-    oldClassName = oldClassName.split(' ');
-    for (var i = 0; i < oldClassName.length; i++) {
-        className = className.replace(oldClassName[i], '');
+    if (!!className) {
+        oldClassName = oldClassName.split(' ');
+        for (var i = 0; i < oldClassName.length; i++) {
+            className = className.replace(oldClassName[i], '');
+        }
+        //这里需注意正则表达式的优先级，先匹配字符串头和尾，再中间
+        className = className.replace(/^\s*|\s*$|\s*(?=\s)/g, '');
+        element.setAttribute('class', className);
     }
-    //这里需注意正则表达式的优先级，先匹配字符串头和尾，再中间
-    className = className.replace(/^\s*|\s*$|\s*(?=\s)/g, '');
-    element.setAttribute('class', className);
+
 }
 
 //cookie设置相关函数
@@ -412,11 +415,30 @@ addEvent(getElementsByClassName(lessonContent, 'm-lessontab')[0], 'click', click
 //分页器的事件函数
 function clickPageHandler(event) {
     var event = event || window.event;
-    var pageElement = getElementsByClassName(lessonContent, 'page-num');
-    for (var i = 0; i < pageElement.length; i++) {
-        removeClass(pageElement[i], 'current');
+    // 获取到选中的页码元素
+    var currentPage = getElementsByClassName(lessonContent, 'current')[1];
+    // 当点击'<'即上一页时候的逻辑
+    if (event.target.textContent == '<') {
+        // 判断当前选中页是否为第一页，否则选中上一页。
+        if (currentPage.textContent != '1') {
+            removeClass(currentPage, 'current');
+            addClass(currentPage.previousElementSibling, 'current');
+        }
     }
-    addClass(event.target, 'current');
+    // 当点击'>'即下一页时的逻辑
+    else if (event.target.textContent == '>') {
+        if (currentPage.textContent != '8') {
+            removeClass(currentPage, 'current');
+            addClass(currentPage.nextElementSibling, 'current');
+        }
+    }
+    else {
+        // 移除当前选中页码元素的'current'类
+        removeClass(currentPage, 'current');
+        // 给点击的元素加上'current'类
+        addClass(event.target, 'current');
+    }
+    //根据改变的状态重新加载课程信息。
     updateLesson();
 }
 // 分页器绑定点击事件
