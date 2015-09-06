@@ -11,6 +11,9 @@
         overflow: hidden;
         visibility: hidden;
     }
+    .clear-fix{
+        zoom: 1;
+    }
     /* 顶部提醒栏 */
     #top-ad {
         display: none;
@@ -55,11 +58,15 @@
         margin: 0 auto;
     }
     .nav-logo {
+        display: block;
         float: left;
+        width: 234px;
+        height: 22px;
         margin-top: 36px;
         margin-left: 1px;
+        background: url(../img/icon.png) 0 -141px no-repeat;
     }
-    /* 关注按钮 需修改 */
+    /* 关注按钮 */
     .nav-focus, .nav-unfocus {
         display: none;
         float: left;
@@ -167,7 +174,7 @@
         z-index: 999;
         background-color: #fff;
     }
-    #login .close{
+    #login .close {
         display: block;
         position: absolute;
         width: 10px;
@@ -195,13 +202,21 @@
         background-color: #fafafa;
         box-shadow: inset 2px 2px 0 0 #f1f1f1;
     }
+    #fLogin_password {
+        position: absolute;
+        top: 128px;
+        left: 50px;
+        font: 16px/43px "Microsoft YaHei";
+        color: #ccc;
+    }
     #login-form .inputStatus {
         color: #444;
     }
     #login-form .empty {
         border: 1px solid #e00;
     }
-    #password {
+    #login-form #password {
+        color: #444;
         margin-top: 15px;
     }
     #signin {
@@ -243,8 +258,6 @@
     #index-banner .active {
         display: block;
         z-index: 1;
-        /* 用调整margin-left的方式来做动画 */
-        /* margin-left: 100%; */
     }
     #index-banner .pointer {
         position: absolute;
@@ -329,7 +342,7 @@
         left: 50%;
         margin-left: -810px;
     }
-    .m-column .box{
+    .m-column .box {
         position: relative;
         float: left;
         width: 320px;
@@ -375,12 +388,20 @@
     /* lesson 课程信息 */
     .m-lessonlist {
         margin-top: 30px;
+        height: 1220px;
+        visibility : hidden;
+    }
+    .m-lessonlist.on {
+        visibility : visible;
     }
     .m-lessonlist .col {
         float: left;
     }
     .m-lessonlist .col + .col {
         margin-left: 20px;
+    }
+    .m-lessonlist .col.last {
+        display: none;
     }
     .m-lessonlist .item {
         display: block;
@@ -527,8 +548,11 @@
         font: 14px/1 "Microsoft YaHei";
         color: #666;
         border: 1px solid #ecebeb;
-        border-width: 0 1px 1px 1px;
+        border-width: 0 1px 0px 1px;
         background-color: #fff;
+    }
+    .m-organization:hover {
+        box-shadow: 0 3px 8px 1px #d0cfd0;
     }
     .m-organization .title, .m-rank .title {
         padding: 19px 20px 20px;
@@ -557,9 +581,6 @@
         width: 46px;
         height: 46px;
         background: url(../img/icon.png) -240px -118px no-repeat;
-    }
-    .m-rank {
-        margin-top: 19px;
     }
     /* 视频播放窗口 */
     #video-page {
@@ -598,16 +619,25 @@
         right: 12px;
         background: url(../img/icon.png) -55px -105px no-repeat;
     }
-    /*以上的代码可复用可修改HTML的CLASS类*/
     /* 3.最热排行 */
+    .m-rank {
+        margin-top: 19px;
+    }
+    .m-rank:hover {
+        box-shadow: 0 3px 8px 1px #d0cfd0;
+    }
     .m-rank .rank-box {
         height: 700px;
         padding-top: 0;
         padding-right: 15px;
         overflow: hidden;
     }
-    .m-rank .rank-box ul {
+    .m-rank .rank-box .list {
         position: relative;
+        visibility: hidden;
+    }
+    .m-rank .rank-box .list.on {
+        visibility: visible;
     }
     .m-rank .item {
         height: 50px;
@@ -700,7 +730,28 @@
     }
     /* 媒体检测 */
     @media screen and (max-width: 1205px) {
+        body {
+            min-width: 960px;
+        }
         #top-ad .box {
             width: 960px;
+        }
+        .nav-box {
+            width: 960px;
+        }
+        .promotion-box {
+            width: 960px;
+        }
+        .promotion-item {
+            width: 173px;
+        }
+        .promotion-item + .promotion-item {
+            margin-left: 50px;
+        }
+        #main {
+            width: 960px;
+        }
+        #main-content {
+            width: 715px;
         }
     }

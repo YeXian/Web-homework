@@ -11,22 +11,22 @@
     <!-- 顶部提醒栏 -->
     <div id="top-ad">
         <div class="box clear-fix">
-            <div class="more">网易云课堂微专业，帮助你掌握专业技能，令你求职或加薪多一份独特优势！ <a href="http://study.163.com/smartSpec/intro.htm">立即查看&gt;</a></div>
+            <div class="more">网易云课堂微专业，帮助你掌握专业技能，令你求职或加薪多一份独特优势！ <a href="http://study.163.com/smartSpec/intro.htm" target="_blank">立即查看&gt;</a></div>
             <a class="close"><span>×</span> 不再提醒</a>
         </div>
     </div>
     <!-- 顶部导航 -->
     <div id="nav"> 
         <div class="nav-box clear-fix" >
-            <h2><a href=""><img class="nav-logo" src="img/logo1.png" alt=""></a></h2>
-            <a id="focus" class="nav-focus"><em>+</em>关注</a>
-            <div class="nav-unfocus" href=""><i></i>已关注 <span>|</span> <a id="unfocus">取消</a></div>
+            <h2><a href="" class="nav-logo" title="网易教育产品部"></a></h2>
+            <a id="focus" class="nav-focus" title="关注网易教育产品部"><em>+</em>关注</a>
+            <div class="nav-unfocus" href=""><i></i>已关注 <span>|</span> <a id="unfocus" title="取消关注">取消</a></div>
             <span class="nav-fans">粉丝 45</span>
             <div class="nav-menu clear-fix">
                 <a href="http://open.163.com/" target="_blank">网易公开课</a>
                 <a href="http://study.163.com/" target="_blank">云课堂</a>
                 <a class="mooc" href="http://www.icourse163.org/" target="_blank">中国大学MOOC</a>
-                <div class="nav-search"></div>
+                <div class="nav-search" title="搜索"></div>
             </div>
         </div>
     </div>
@@ -37,7 +37,8 @@
             <h2 class="login-title">登录网易云课堂</h2>
             <form id="login-form" action="">
                 <input id="name" value="帐号" type="text">
-                <input id="password" value="密码" type="text">
+                <input id="password" value="" type="password">
+                <label id="fLogin_password" for="password">密码</label>
                 <button id="signin" type="submit">登 录</button>
             </form>
             <p class="login-error">用户名或密码错误</p>
@@ -419,7 +420,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col">
+                <div class="col last">
                     <a href="" class="item">
                         <img src="" alt="">
                         <div class="item-box">
@@ -528,7 +529,7 @@
                 </div>
             </div>
             <div class="m-pages">
-                <a class="page-go">&lt;</a><a class="page-num current">1</a><a class="page-num">2</a><a class="page-num">3</a><a class="page-num">4</a><a class="page-num">5</a><a class="page-num">6</a><a class="page-num">7</a><a class="page-num">8</a><a class="page-go">&gt;</a>
+                <a class="page-go" title="上一页">&lt;</a><a class="page-num current">1</a><a class="page-num">2</a><a class="page-num">3</a><a class="page-num">4</a><a class="page-num">5</a><a class="page-num">6</a><a class="page-num">7</a><a class="page-num">8</a><a class="page-go" title="下一页">&gt;</a>
             </div>
         </div>
         <!-- 边栏 -->
@@ -537,7 +538,7 @@
                 <h2 class="title">机构介绍</h2>
                 <div class="video-box">
                     <p>观看下面的视频来了解吧：</p>
-                    <a class="video-img" onclick="openVideoPage()">
+                    <a class="video-img" onclick="openVideoPage()" title="播放视频">
                         <img src="img/video.jpg" alt="">
                         <div class="icon"></div>
                     </a>
@@ -554,7 +555,7 @@
             <div class="m-rank">
                 <h2 class="title">最热排行</h2>
                 <div class="rank-box">
-                    <ul style="bottom: 0;">
+                    <ul class="list" style="bottom: 0;">
                         <li class="item">
                             <img src="" alt="">
                             <h3 class="item-name"></h3>

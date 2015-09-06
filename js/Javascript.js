@@ -80,10 +80,9 @@ function removeClass(element, oldClassName) {
         className = className.replace(/^\s*|\s*$|\s*(?=\s)/g, '');
         element.setAttribute('class', className);
     }
-
 }
 
-//cookie设置相关函数
+//cookie设置函数
 function setCookie(name, value, expires) {
     var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
     if (expires instanceof Date) {
@@ -91,6 +90,7 @@ function setCookie(name, value, expires) {
     }
     document.cookie = cookieText;
 }
+//查询cookie并获取对应的值
 function getCookie(cookieName) {
     var name = encodeURIComponent(cookieName) + '=';
     var cookieStart = document.cookie.indexOf(name);
@@ -118,11 +118,13 @@ function getTopAd() {
 addEvent(window, 'load', getTopAd);
 var ad = document.getElementById('top-ad');
 var closeLink = getElementsByClassName(ad, 'close')[0];
-//给不再提醒按钮绑定点击事件，设置cookie。
+//给不再提醒按钮绑定点击事件，
 addEvent(closeLink, 'click', function() {
     var date = new Date('January 1, 2026');
+    //设置cookie，有了这个cookie后，window再load的时候就不会加载顶部的提醒
     setCookie('top-ad', '1', date);
-    document.getElementById('top-ad').style['display'] = '';
+    //将顶部提醒栏关闭
+    document.getElementById('top-ad').style['display'] = 'none';
 });
 
 // 2、关注与登录cookie设置
@@ -142,22 +144,19 @@ var login = {
         var element = document.getElementById('login');
         element.style['display'] = 'none';
     },
-    //事件函数：点击用户名输入框的清除
+    // focus用户名输入框时执行的事件函数
     cleanUserName: function() {
         if (userName.value == '帐号') {
             userName.value = '';
             addClass(userName, 'inputStatus');
         }
     },
-    //事件函数：点击密码输入框的清除与输入类型转换
+    // focus密码输入框时执行的事件函数
     cleanPassword: function() {
-        if (userPassword.value == '密码') {
-            userPassword.value = '';
-            userPassword.type = 'password';
-            addClass(userPassword, 'inputStatus');
-        }
+        var passwordRemind = document.getElementById('fLogin_password');
+        passwordRemind.style.display = 'none';
     },
-    // 调用Ajax发送登录请求
+    // 调用Ajax发送登录请求的函数
     loginXHR: function(userName, password) {
         var loginXHR = new XMLHttpRequest;
         loginXHR.onreadystatechange = function() {
@@ -168,21 +167,26 @@ var login = {
             }
         }
         function setLoginCookie(status) {
-            //登录成功后设置cookie
+            //登录成功后执行的逻辑
             if (status == 1) {
+                //设置登录cookie
                 setCookie('loginSuc', '1', new Date('January 1, 2026'));
                 //关闭登录窗口
                 login.close();
                 //在登录成功后调用关注API
                 clickFocusHandler();
             }
+            //登录不成功时执行的逻辑
             if (status == 0) {
+                //清空密码输入框
                 userPassword.value = '';
+                //弹出错误提醒
                 var error = getElementsByClassName(document, 'login-error')[0];
                 error.style['display'] = 'block';
             }
         }
-        //将用户名与密码进行MD5加密。
+        //将用户名与密码进行MD5加密，
+        //注：此处唯一的引用了外部的库，用于md5加密
         userName = hex_md5(userName);
         password = hex_md5(password);
         //设置url
@@ -193,19 +197,23 @@ var login = {
     //事件函数：表单提交的事件函数
     loginSubmit: function(event) {
         var event = event || window.event;
-        //表单验证
+        //因为我们用Ajax提交表单并获取登录状态，在这里阻止默认的表单提交事件
+        if (event.preventDefault) {
+            event.preventDefault();
+        }
+        else {
+            event.returnValue = false;
+        }
+        //表单验证，如果帐号输入框和密码输入框为空时，阻止提交并显示红框样式
         if (userName.value == '' || userName.value == '帐号') {
             addClass(userName, 'empty');
-            event.preventDefault();
             return;
         }
         if (userPassword.value == '' || userPassword.value == '密码') {
             addClass(password, 'empty');
-            event.preventDefault();
             return;
         }
-        //阻止默认的提交事件，用Ajax提交表单
-        event.preventDefault();
+        //用Ajax提交表单
         login.loginXHR(userName.value, userPassword.value);
     }
 }
@@ -216,6 +224,7 @@ function clickFocusHandler() {
     if (!loginStatus) {
         login.open();
     }
+    //如果已设置了登录cookie，则直接关注。
     else {
         setCookie('followSuc', '1', new Date('January 1, 2026'));
         changeFocusStatus();
@@ -223,7 +232,7 @@ function clickFocusHandler() {
 }
 // 根据followSuc的cookie值改变显示的关注状态
 function changeFocusStatus() {
-    //分别获取显示关注和已关注的元素
+    //分别获取显示关注和已关注的DOM元素
     var focusElement = document.getElementById('focus');
     var unfocusElement = getElementsByClassName(document, 'nav-unfocus')[0];
     //获取关注的cookie状态
@@ -247,16 +256,16 @@ addEvent(document.getElementById('unfocus'), 'click', function(event) {
     setCookie('followSuc', '');
     changeFocusStatus();
 });
-//聚焦用户名与密码输入框时清空输入框的初始状态
+//绑定用户名与密码输入框，触发focus事件时调用清空输入框的事件
 addEvent(userName, 'focus', login.cleanUserName);
 addEvent(userPassword, 'focus', login.cleanPassword);
-//给用户名输入框绑定事件：输入时取消红框，不显示错误信息。
+//给用户名输入框绑定事件：输入时取消红框，并隐藏已显示的错误信息。
 addEvent(userName, 'input', function() {
     removeClass(userName, 'empty');
     var error = getElementsByClassName(document, 'login-error')[0];
     error.style['display'] = '';
 });
-//给密码输入框绑定事件：用输入时取消红框，并不显示错误信息。
+//给密码输入框绑定事件：输入时取消红框，并隐藏已显示的错误信息。
 addEvent(userPassword, 'input', function() {
     removeClass(userPassword, 'empty');
     var error = getElementsByClassName(document, 'login-error')[0];
@@ -265,13 +274,13 @@ addEvent(userPassword, 'input', function() {
 //绑定表单提交的事件，验证表单与Ajax提交
 addEvent(loginForm, 'submit', login.loginSubmit);
 
-// 3、点击导航和内容区的了解更多,在新窗口打开连接，通过HTML实现
+// 3、点击导航和内容区的了解更多,在新窗口打开连接：已通过HTML实现
 // 4、轮播图部分
-// 淡入动画
-function fadein(element) {
+// 元素的淡入动画，spped表示每10ms增加的透明度
+function fadein(element, speed) {
     var opacity = 0;
     var step = function() {
-        opacity = opacity + (1/100);
+        opacity = opacity + (speed / 100);
         if (opacity < 1) {
             element.style['opacity'] = opacity + '';
         }
@@ -280,9 +289,9 @@ function fadein(element) {
             clearInterval(intervalID);
         }
     };
-    var intervalID = setInterval(step, 5);
+    var intervalID = setInterval(step, 10);
 }
-//banner变换动画控制函数，传入的参数为要入场的banner序号，也可不传
+//banner变换动画控制函数，调用后切换banner，传入的参数为要入场的banner序号，不传时则切换至下一张
 var bannerControl = function(num) {
     //定位到banner容器
     var bannerContent = document.getElementById('index-banner');
@@ -305,7 +314,7 @@ var bannerControl = function(num) {
     //将当前banner透明度设置为0
     active.style['opacity'] = '0';
     //进场banner使用入场动画
-    fadein(nextBanner);
+    fadein(nextBanner, 2);
     //改变表示当前banner和pointer的类名
     removeClass(active, 'active');
     addClass(nextBanner, 'active');
@@ -353,6 +362,7 @@ function updateLessonXHR(pageNo, psize, type) {
         data = JSON.parse(data);
         var dataList = data.list;
         var itemArr = getElementsByClassName(lessonContent, 'item');
+        var lessonList = getElementsByClassName(lessonContent, 'm-lessonlist')[0];
         for (var i = 0; i < dataList.length; i++) {
             //获取课程信息HTML中每个对应元素的引用。
             var item = {};
@@ -381,13 +391,24 @@ function updateLessonXHR(pageNo, psize, type) {
             item.category.innerText = dataList[i].categoryName;
             item.description.innerText = dataList[i].description;
         }
+        //当内容填充完毕后，显示课程信息。
+        addClass(lessonList, 'on');
     }
 }
 //根据当前的菜单选项和分页器的选中的值，调用Ajax更新课程信息
 function updateLesson() {
     var tab = getElementsByClassName(lessonContent, 'current')[0];
     var page = getElementsByClassName(lessonContent, 'current')[1];
-    updateLessonXHR(page.textContent, '20', tab.value);
+    var lastCol = getElementsByClassName(lessonContent, 'last')[0];
+    //如果当前课程信息容器的宽度为960px，则更新4列数据，共20门。
+    if (lessonContent.clientWidth == 960) {
+        lastCol.style.display = 'block';
+        updateLessonXHR(page.textContent, '20', tab.value);
+    }
+    //否则只更新3列课程信息数据，共15门。
+    else {
+        updateLessonXHR(page.textContent, '15', tab.value);
+    }
 }
 //window的load事件加载课程信息。
 addEvent(window, 'load', updateLesson);
@@ -456,7 +477,9 @@ function mouseHover(event) {
     mouseHoverTimer = setTimeout(openFlow, 600);
     //打开浮层的函数
     function openFlow() {
+        flow.style['opacity'] = '0';
         addClass(flow, 'cur');
+        fadein(flow, 5);
     }
 }
 //鼠标离开元素的事件函数
@@ -511,18 +534,21 @@ function loadRank(event) {
         data = JSON.parse(data);
         //获取模块中的每个条目，用数组保存起来。
         var itemArr = getElementsByClassName(rankElement, 'item');
+        var list = getElementsByClassName(rankElement, 'list')[0];
         for (var i = 0; i < itemArr.length; i++) {
             //定义每个条目的对象，包含图片，标题，人数属性与DOM结构对应。
             var item = {};
             item.img = itemArr[i].getElementsByTagName('img')[0];
             item.name = getElementsByClassName(itemArr[i], 'item-name')[0];
             item.number = getElementsByClassName(itemArr[i], 'num')[0];
-            //给每个条目对应的属性赋值。
+            //给每个条目对应的属性填充值。
             item.img.src = data[i].smallPhotoUrl;
             item.name.innerText = data[i].name;
             item.name.title = data[i].name;
             item.number.innerText = data[i].learnerCount;
         }
+        //值填充完毕后，显示元素。
+        addClass(list, 'on');
     }
 }
 //给window的load事件绑定加载热门推荐的事件函数
@@ -587,3 +613,25 @@ var moveControl = function() {
 moveControl();
 //之后每51秒执行一次，用于判断位置改变动画。
 var scrollControlTimer = setInterval(moveControl, 51000);
+
+//9、页面布局动态适应
+//窗口改变大小时触发的事件函数
+function resizeHandler(event) {
+    var lastCol = getElementsByClassName(lessonContent, 'last')[0];
+    //当由窄屏切换到宽屏布局时，显示第四列并根据列数重新刷新数据。
+    if (lessonContent.clientWidth == 960) {
+        if (window.getComputedStyle(lastCol).display == 'none') {
+            lastCol.style.display = 'block';
+            updateLesson();
+        }
+    }
+    //当由宽屏切换到窄屏时，关闭第四列并刷新数据。
+    else if (lessonContent.clientWidth == 715) {
+        if (window.getComputedStyle(lastCol).display == 'block') {
+            lastCol.style.display = 'none';
+            updateLesson();
+        }
+    }
+}
+//绑定窗口的resize事件
+addEvent(window, 'resize', resizeHandler);
